@@ -173,10 +173,26 @@ def belt(elements, arc_step=0.2, line_step=0.6):
     return np.array(pts), marks
 
 
+class FlatBase:
+    """Collar laid open on a table: x = s, y = -w, z = h (isometric, no ring)."""
+
+    def frame(self, s):
+        s = np.asarray(s, float); z = np.zeros_like(s); o = np.ones_like(s)
+        return s, z, o, z, z, o
+
+    def world(self, s, h, w):
+        s = np.asarray(s, float)
+        return np.stack([s, -np.broadcast_to(w, s.shape) + 0.0, np.broadcast_to(h, s.shape) + 0.0], -1)
+
+    def normal3(self, s, a_s, a_h):
+        return np.stack([a_s, np.zeros_like(a_s), a_h], -1)
+
+
 class Layout:
     """Solves the slider position for the cut length and exposes the strap."""
 
-    def __init__(self):
+    def __init__(self, flat=False):
+        self.flat = flat
         C = P["circumference"]
         self.C = C
         self.s_m = P["s_bar_m"]
@@ -227,13 +243,13 @@ class Layout:
         ]
         self.elements = E
         self.pts, self.marks = belt(E)
-        self.base = BaseCurve(self.C, s_sl)
+        self.base = FlatBase() if self.flat else BaseCurve(self.C, s_sl)
         d = np.gradient(self.pts, axis=0)
         d /= np.linalg.norm(d, axis=1)[:, None]
         self.tan = d
         self.anorm = np.stack([-d[:, 1], d[:, 0]], -1)     # face A = left of travel
         self.ell2d = np.concatenate([[0], np.cumsum(np.linalg.norm(np.diff(self.pts, axis=0), axis=1))])
-        w3 = self.base.world(self.pts[:, 0], self.pts[:, 1], 0.0)
+        w3 = self.pts if self.flat else self.base.world(self.pts[:, 0], self.pts[:, 1], 0.0)
         self.ell = np.concatenate([[0], np.cumsum(np.linalg.norm(np.diff(w3, axis=0), axis=1))])
         self.length = self.ell[-1]
         # marks were measured in section space: convert to true strap length

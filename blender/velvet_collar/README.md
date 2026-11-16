@@ -34,6 +34,20 @@ can be changed and the file rebuilt.
 - Strap thickness 2.2 mm (1.4 mm webbing + 0.8 mm velvet); bars 3 mm; slider slots 7.5 mm.
 - Scene custom properties store `cut_length_mm`, `neck_circumference_mm`, `slider_to_male_bar_mm`.
 
+## Video tutorial
+
+`tutorial/velvet_collar_tutorial.mp4` shows the build in 13 captioned steps, assembled flat on a table.
+
+```bash
+python3 make_tutorial.py --check              # every animated frame: strap vs strap / hardware / table
+python3 make_tutorial.py --render --final     # frames into tutorial/frames/ (resumes if interrupted)
+python3 assemble_video.py                     # captions + mp4 (edit the caption text here)
+```
+
+In every frame the strap is the full 26 in long and touches nothing it should not: threading is shown by
+sliding the strap along its route (slider loop) or by moving a buckle bar along the strap so the strap
+rolls round it. Hands, the sewing machine and the bow's own construction are not shown.
+
 ## Rebuild / check
 
 ```bash
