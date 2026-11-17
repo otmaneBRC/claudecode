@@ -595,13 +595,13 @@ def render_final(argv):
     sc.cycles.samples = samples; sc.render.resolution_x, sc.render.resolution_y = 1280, 720
     sc.render.resolution_percentage = 100
     sc.render.image_settings.file_format = "JPEG"; sc.render.image_settings.quality = 95
-    tgt = Vector((0.0, 0.035, 0.012)); n = 48
+    tgt = Vector((0.0, -0.005, 0.012)); n = 48
     for k in range(n):
         path = os.path.join(out_dir, f"16_final_{k:03d}.jpg")
         if os.path.exists(path):
             continue
         az = math.radians(lerp(-38.0, 38.0, ease(k / (n - 1)))); el = math.radians(36.0)
-        camo.location = tgt + 0.62 * Vector((math.sin(az) * math.cos(el), -math.cos(az) * math.cos(el), math.sin(el)))
+        camo.location = tgt + 0.86 * Vector((math.sin(az) * math.cos(el), -math.cos(az) * math.cos(el), math.sin(el)))
         camo.rotation_euler = (tgt - camo.location).to_track_quat("-Z", "Y").to_euler()
         sc.render.filepath = path
         bpy.ops.render.render(write_still=True)
